@@ -41,6 +41,44 @@ impl Component for Model {
     }
 }
 
+#[function_component(Game)]
+fn game()->Html{
+    html!(
+        <div class="tablero">
+        <button class="empezar">{"Empezar juego"}</button>
+        <div class="superior">
+            <div class="mazo">
+                <div class="espacio-carta">
+                    <div id="pila-inicial"></div>
+                    <div class="carta-mazo">
+                        <img src="img/dorso.png"/>
+                    </div>
+                </div>
+                <div class="espacio-carta" id="seleccionada"></div>
+            </div>
+            <div class="casa">
+                <div class="espacio-carta" id="casa-0"></div>
+                <div class="espacio-carta" id="casa-1"></div>
+                <div class="espacio-carta" id="casa-2"></div>
+                <div class="espacio-carta" id="casa-3"></div>
+            </div>
+        </div>
+        <div class="inferior">
+            <div class="espacio-carta" id="pila-0"></div>
+            <div class="espacio-carta" id="pila-1"></div>
+            <div class="espacio-carta" id="pila-2"></div>
+            <div class="espacio-carta" id="pila-3"></div>
+            <div class="espacio-carta" id="pila-4"></div>
+            <div class="espacio-carta" id="pila-5"></div>
+            <div class="espacio-carta" id="pila-6"></div>
+        </div>
+    </div>
+    )
+}
+
+
 fn main() {
-    yew::start_app::<Model>();
+    yew::start_app::<Game>();
+
+    
 }
