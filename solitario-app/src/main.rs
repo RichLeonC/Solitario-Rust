@@ -45,13 +45,16 @@ impl Component for Model {
 fn game()->Html{
     html!(
         <div class="tablero">
-        <button class="empezar">{"Empezar juego"}</button>
+        <button class="empezar">{"Juego nuevo"}</button>
+        <br/>
+        <br/>
+        <button class="empezar">{"Salir"}</button>
         <div class="superior">
             <div class="mazo">
                 <div class="espacio-carta">
                     <div id="pila-inicial"></div>
                     <div class="carta-mazo">
-                        <img src="img/dorso.png"/>
+                        <img src="./img/card back red.png" width="98" height="152"/>
                     </div>
                 </div>
                 <div class="espacio-carta" id="seleccionada"></div>
