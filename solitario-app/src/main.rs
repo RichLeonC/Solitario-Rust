@@ -1,48 +1,49 @@
+use std::path::StripPrefixError;
+
+use gloo::console::{externs::log, log};
+use serde::{Deserialize, Serialize};
 use yew::prelude::*;
 
-enum Msg {
-    AddOne,
-}
-
-struct Model {
-    value: i64,
-}
-
-impl Component for Model {
-    type Message = Msg;
-    type Properties = ();
-
-    fn create(_ctx: &Context<Self>) -> Self {
-        Self {
-            value: 0,
-        }
-    }
-
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        match msg {
-            Msg::AddOne => {
-                self.value += 1;
-                // the value has changed so we need to
-                // re-render for it to appear on the page
-                true
-            }
-        }
-    }
-
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        // This gives us a component's "`Scope`" which allows us to send messages, etc to the component.
-        let link = ctx.link();
-        html! {
-            <div>
-                <button onclick={link.callback(|_| Msg::AddOne)}>{ "+1" }</button>
-                <p>{ self.value }</p>
-            </div>
-        }
-    }
+#[derive(Serialize, Deserialize)]
+struct Carta {
+    valor: String,
+    tipo: String,
+    color: String,
+    img: String,
 }
 
 #[function_component(Game)]
-fn game()->Html{
+
+fn game() -> Html {
+    // let onclick2 = Callback::from(|mouse_event:MouseEvent|{
+    //     log!("Probando");
+    // });
+
+    let llenaMazo:() = {
+        let mut mazo: Vec<Carta> = Vec::new();
+        let tipos = ["trebol", "corazon", "diamante", "espada"];
+        let nums = [
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "Z", "J", "Q", "K",
+        ];
+        for i in nums {
+            for j in tipos {
+                let mut colores = "rojo";
+                if j.to_string().eq("trebol") || j.to_string().eq("espada") {
+                    colores = "negro";
+                }
+                let imgs = format!("./img/{}_de_{}.png", i.to_string(), j.to_string());
+                let carta = Carta {
+                    valor: i.to_string(),
+                    color: colores.to_string(),
+                    tipo: j.to_string(),
+                    img: imgs.to_string(),
+                };
+                mazo.push(carta);
+            }
+        }
+        log!(serde_json::to_string_pretty(&mazo).unwrap());
+    };
+
     html!(
         <div class="tablero">
         <button class="empezar">{"Juego nuevo"}</button>
@@ -79,9 +80,6 @@ fn game()->Html{
     )
 }
 
-
 fn main() {
     yew::start_app::<Game>();
-
-    
 }
