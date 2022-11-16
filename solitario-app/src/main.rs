@@ -1,8 +1,9 @@
-use std::path::StripPrefixError;
+use std::{path::StripPrefixError, ops::RangeInclusive};
 
-use gloo::console::{externs::log, log};
-use serde::{Deserialize, Serialize};
-use yew::prelude::*;
+use gloo::console::{externs::log, log}; //Para usar console log
+use rand::{Rng, random};
+use serde::{Deserialize, Serialize}; //Para mostrar imprimir JSON
+use yew::prelude::*; //Framework //Math random
 
 #[derive(Serialize, Deserialize)]
 struct Carta {
@@ -18,9 +19,8 @@ fn game() -> Html {
     // let onclick2 = Callback::from(|mouse_event:MouseEvent|{
     //     log!("Probando");
     // });
-
-    let llenaMazo:() = {
-        let mut mazo: Vec<Carta> = Vec::new();
+    let mut mazo: Vec<Carta> = Vec::new();
+    let llenarMazo: () = {
         let tipos = ["trebol", "corazon", "diamante", "espada"];
         let nums = [
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "Z", "J", "Q", "K",
@@ -41,7 +41,37 @@ fn game() -> Html {
                 mazo.push(carta);
             }
         }
-        log!(serde_json::to_string_pretty(&mazo).unwrap());
+    };
+    //log!(serde_json::to_string_pretty(&mazo).unwrap());
+    log!(mazo.len());
+    let mezclarMazo: () = {
+        let mut rng = rand::thread_rng();
+        let mut mazoRevuelto:Vec<Carta> = Vec::new();
+        let mut g2:Vec<Carta> = Vec::new();
+        let mut g3:Vec<Carta> = Vec::new();
+
+        for i in mazo{
+            let random = rng.gen_range(1..3);
+            if random == 1{
+                mazoRevuelto.push(i);
+            }
+            else if random == 2{
+                g2.push(i);
+            }
+            else{
+                g3.push(i);
+            }
+        }
+        for i in g2{
+            mazoRevuelto.push(i);
+        }
+        for i in g3{
+            mazoRevuelto.push(i);
+        }
+ 
+
+        log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
+
     };
 
     html!(
