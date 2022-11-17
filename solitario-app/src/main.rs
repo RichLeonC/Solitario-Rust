@@ -87,14 +87,13 @@ fn game() -> Html {
         mazoRevuelto
     }
     
-    fn colocar()->[Vec<Option<Carta>>;7]{
-        let mut pilas:[Vec<Option<Carta>>;7] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
+    fn colocar()->[Vec<Carta>;7]{
+        let mut pilas:[Vec<Carta>;7] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
         let mut mazoRevuelto:Vec<Carta> = mezclarMazo();
         for i in 0..6{
            for j in 0..(i+1){
-            let carta:Option<Carta> = mazoRevuelto.get(0).cloned();
+            let carta = mazoRevuelto[0].clone();
             mazoRevuelto.remove(0);
-           // cartas.push(carta);
             pilas[i].push(carta);
            }
         }
