@@ -1,18 +1,26 @@
-use std::{path::StripPrefixError, ops::RangeInclusive};
 
-use gloo::console::{externs::log, log}; //Para usar console log
-use rand::{Rng, random};
+use gloo::console::{log}; //Para usar console log
+use rand::{Rng};
 use serde::{Deserialize, Serialize}; //Para mostrar imprimir JSON
 use yew::prelude::*; //Framework //Math random
 
 #[derive(Serialize, Deserialize)]
 
+
+#[derive(Clone)]
 struct Carta {
     valor: String,
     tipo: String,
     color: String,
     img: String,
 }
+
+// impl Copy for Carta{}
+// impl Clone for Carta {
+//     fn clone(&self)->Carta{
+//         *self
+//     }
+// }
 
 #[function_component(Game)]
 
@@ -21,8 +29,9 @@ fn game() -> Html {
     //     log!("Probando");
     // });
     let m = use_state(|| Vec::new());
-   // mazo:&mut Vec<Carta>
-    fn creaMazo()->Vec<Carta>{
+
+    // mazo:&mut Vec<Carta>
+    fn creaMazo() -> Vec<Carta> {
         let mut mazo: Vec<Carta> = Vec::new();
         let tipos = ["trebol", "corazon", "diamante", "espada"];
         let nums = [
@@ -42,55 +51,60 @@ fn game() -> Html {
                     img: imgs.to_string(),
                 };
                 mazo.push(carta);
-                
             }
         }
         log!(serde_json::to_string_pretty(&mazo).unwrap());
         mazo
-    };
+    }
 
-    let llenarMazo =Callback::from(move |_|{
-        m.set(creaMazo());
+    fn mezclarMazo() -> Vec<Carta> {
+        let mut rng = rand::thread_rng();
+        let mut mazoRevuelto: Vec<Carta> = Vec::new();
+        let mut g2: Vec<Carta> = Vec::new();
+        let mut g3: Vec<Carta> = Vec::new();
+        let mut mazo: Vec<Carta> = creaMazo();
+
+        for i in mazo {
+            let random = rng.gen_range(1..4);
+            log!(random);
+            if random == 1 {
+                mazoRevuelto.push(i);
+            } else if random == 2 {
+                g2.push(i);
+            } else {
+                g3.push(i);
+            }
+        }
+        for i in g2 {
+            mazoRevuelto.push(i);
+            mazoRevuelto.reverse();
+        }
+        for i in g3 {
+            mazoRevuelto.push(i);
+        }
+
+        log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
+        mazoRevuelto
+    }
+    
+    fn colocar()->[Vec<Option<Carta>>;7]{
+        let mut pilas:[Vec<Option<Carta>>;7] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
+        let mut mazoRevuelto:Vec<Carta> = mezclarMazo();
+        for i in 0..6{
+           for j in 0..(i+1){
+            let carta:Option<Carta> = mazoRevuelto.get(0).cloned();
+            mazoRevuelto.remove(0);
+           // cartas.push(carta);
+            pilas[i].push(carta);
+           }
+        }
+        pilas
+    }
+
+    let llenarMazo = Callback::from(move |_| {
+        m.set(mezclarMazo());
         log!(serde_json::to_string_pretty(&*m).unwrap());
     });
-
-
-   
-
- 
-    
-    // let mezclarMazo: () = {
-    //     let mut rng = rand::thread_rng();
-    //     let mut mazoRevuelto:Vec<Carta> = Vec::new();
-    //     let mut g2:Vec<Carta> = Vec::new();
-    //     let mut g3:Vec<Carta> = Vec::new();
-
-    //     for i in mazo{
-    //         let random = rng.gen_range(1..4);
-    //         log!(random);
-    //         if random == 1{
-    //             mazoRevuelto.push(i);
-    //         }
-    //         else if random == 2{
-    //             g2.push(i);
-    //         }
-    //         else{
-    //             g3.push(i);
-    //         }
-    //     }
-    //     for i in g2{
-    //         mazoRevuelto.push(i);
-    //         mazoRevuelto.reverse();
-            
-    //     }
-    //     for i in g3{
-    //         mazoRevuelto.push(i);
-    //     }
- 
-
-    //     log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
-
-    // };
 
     html!(
         <div class="tablero">
