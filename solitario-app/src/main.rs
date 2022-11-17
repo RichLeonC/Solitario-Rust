@@ -20,7 +20,8 @@ fn game() -> Html {
     //     log!("Probando");
     // });
     let mut mazo: Vec<Carta> = Vec::new();
-    let llenarMazo: () = {
+    let creaMazo= ||{
+        
         let tipos = ["trebol", "corazon", "diamante", "espada"];
         let nums = [
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "Z", "J", "Q", "K",
@@ -39,47 +40,56 @@ fn game() -> Html {
                     img: imgs.to_string(),
                 };
                 mazo.push(carta);
+                
             }
         }
+        log!(serde_json::to_string_pretty(&mazo).unwrap());
+       
     };
-    //log!(serde_json::to_string_pretty(&mazo).unwrap());
-    log!(mazo.len());
-    let mezclarMazo: () = {
-        let mut rng = rand::thread_rng();
-        let mut mazoRevuelto:Vec<Carta> = Vec::new();
-        let mut g2:Vec<Carta> = Vec::new();
-        let mut g3:Vec<Carta> = Vec::new();
 
-        for i in mazo{
-            let random = rng.gen_range(1..4);
-            log!(random);
-            if random == 1{
-                mazoRevuelto.push(i);
-            }
-            else if random == 2{
-                g2.push(i);
-            }
-            else{
-                g3.push(i);
-            }
-        }
-        for i in g2{
-            mazoRevuelto.push(i);
-            mazoRevuelto.reverse();
+
+    let llenarMazo =Callback::from(|mouse_event:MouseEvent|{
+        creaMazo;
+        
+        
+    });
+    
+    // let mezclarMazo: () = {
+    //     let mut rng = rand::thread_rng();
+    //     let mut mazoRevuelto:Vec<Carta> = Vec::new();
+    //     let mut g2:Vec<Carta> = Vec::new();
+    //     let mut g3:Vec<Carta> = Vec::new();
+
+    //     for i in mazo{
+    //         let random = rng.gen_range(1..4);
+    //         log!(random);
+    //         if random == 1{
+    //             mazoRevuelto.push(i);
+    //         }
+    //         else if random == 2{
+    //             g2.push(i);
+    //         }
+    //         else{
+    //             g3.push(i);
+    //         }
+    //     }
+    //     for i in g2{
+    //         mazoRevuelto.push(i);
+    //         mazoRevuelto.reverse();
             
-        }
-        for i in g3{
-            mazoRevuelto.push(i);
-        }
+    //     }
+    //     for i in g3{
+    //         mazoRevuelto.push(i);
+    //     }
  
 
-        log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
+    //     log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
 
-    };
+    // };
 
     html!(
         <div class="tablero">
-        <button class="empezar">{"Juego nuevo"}</button>
+        <button onclick={llenarMazo} class="empezar">{"Juego nuevo"}</button>
         <br/>
         <br/>
         <button class="empezar">{"Salir"}</button>
