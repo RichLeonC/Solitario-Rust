@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize}; //Para mostrar imprimir JSON
 use yew::prelude::*; //Framework //Math random
 
 #[derive(Serialize, Deserialize)]
+
 struct Carta {
     valor: String,
     tipo: String,
@@ -19,9 +20,10 @@ fn game() -> Html {
     // let onclick2 = Callback::from(|mouse_event:MouseEvent|{
     //     log!("Probando");
     // });
-    let mut mazo: Vec<Carta> = Vec::new();
-    let creaMazo= ||{
-        
+    let m = use_state(|| Vec::new());
+   // mazo:&mut Vec<Carta>
+    fn creaMazo()->Vec<Carta>{
+        let mut mazo: Vec<Carta> = Vec::new();
         let tipos = ["trebol", "corazon", "diamante", "espada"];
         let nums = [
             "1", "2", "3", "4", "5", "6", "7", "8", "9", "Z", "J", "Q", "K",
@@ -44,15 +46,18 @@ fn game() -> Html {
             }
         }
         log!(serde_json::to_string_pretty(&mazo).unwrap());
-       
+        mazo
     };
 
-
-    let llenarMazo =Callback::from(|mouse_event:MouseEvent|{
-        creaMazo;
-        
-        
+    let llenarMazo =Callback::from(move |_|{
+        m.set(creaMazo());
+        log!(serde_json::to_string_pretty(&*m).unwrap());
     });
+
+
+   
+
+ 
     
     // let mezclarMazo: () = {
     //     let mut rng = rand::thread_rng();
