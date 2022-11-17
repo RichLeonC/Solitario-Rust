@@ -51,7 +51,8 @@ fn game() -> Html {
         let mut g3:Vec<Carta> = Vec::new();
 
         for i in mazo{
-            let random = rng.gen_range(1..3);
+            let random = rng.gen_range(1..4);
+            log!(random);
             if random == 1{
                 mazoRevuelto.push(i);
             }
@@ -64,6 +65,8 @@ fn game() -> Html {
         }
         for i in g2{
             mazoRevuelto.push(i);
+            mazoRevuelto.reverse();
+            
         }
         for i in g3{
             mazoRevuelto.push(i);
