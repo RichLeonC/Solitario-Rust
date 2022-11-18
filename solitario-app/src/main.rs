@@ -28,9 +28,10 @@ fn game() -> Html {
     // let onclick2 = Callback::from(|mouse_event:MouseEvent|{
     //     log!("Probando");
     // });
-    let m = use_state(|| Vec::new());
+    //let mazoRestante = use_state(|| Vec::new());
+    let pila= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
+    //let v: Vec<Vec<Carta>> = use_state(|| Vec::new());
 
-    // mazo:&mut Vec<Carta>
     fn creaMazo() -> Vec<Carta> {
         let mut mazo: Vec<Carta> = Vec::new();
         let tipos = ["trebol", "corazon", "diamante", "espada"];
@@ -53,7 +54,7 @@ fn game() -> Html {
                 mazo.push(carta);
             }
         }
-        log!(serde_json::to_string_pretty(&mazo).unwrap());
+        //log!(serde_json::to_string_pretty(&mazo).unwrap());
         mazo
     }
 
@@ -62,11 +63,10 @@ fn game() -> Html {
         let mut mazoRevuelto: Vec<Carta> = Vec::new();
         let mut g2: Vec<Carta> = Vec::new();
         let mut g3: Vec<Carta> = Vec::new();
-        let mut mazo: Vec<Carta> = creaMazo();
+        let mazo: Vec<Carta> = creaMazo();
 
         for i in mazo {
             let random = rng.gen_range(1..4);
-            log!(random);
             if random == 1 {
                 mazoRevuelto.push(i);
             } else if random == 2 {
@@ -83,27 +83,33 @@ fn game() -> Html {
             mazoRevuelto.push(i);
         }
 
-        log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
+        //log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
         mazoRevuelto
     }
     
     fn colocar()->[Vec<Carta>;7]{
         let mut pilas:[Vec<Carta>;7] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
         let mut mazoRevuelto:Vec<Carta> = mezclarMazo();
-        for i in 0..6{
+        for i in 0..7{
            for j in 0..(i+1){
             let carta = mazoRevuelto[0].clone();
             mazoRevuelto.remove(0);
             pilas[i].push(carta);
+           
            }
         }
+        log!(serde_json::to_string_pretty(&pilas).unwrap());
         pilas
+
     }
 
     let llenarMazo = Callback::from(move |_| {
-        m.set(mezclarMazo());
-        log!(serde_json::to_string_pretty(&*m).unwrap());
+        pila.set(colocar());
+        // m.get(0).unwrap().color;
+        log!(serde_json::to_string_pretty(&*pila).unwrap());
+
     });
+
 
     html!(
         <div class="tablero">
