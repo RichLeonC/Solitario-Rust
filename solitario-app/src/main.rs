@@ -1,5 +1,5 @@
 
-use gloo::console::{log}; //Para usar console log
+use gloo::console::{log, externs::log}; //Para usar console log
 use rand::{Rng};
 use serde::{Deserialize, Serialize}; //Para mostrar imprimir JSON
 use yew::prelude::*; //Framework //Math random
@@ -29,7 +29,7 @@ fn game() -> Html {
     //     log!("Probando");
     // });
     //let mazoRestante = use_state(|| Vec::new());
-    let pila= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
+    let pila= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
     //let v: Vec<Vec<Carta>> = use_state(|| Vec::new());
 
     fn creaMazo() -> Vec<Carta> {
@@ -87,8 +87,9 @@ fn game() -> Html {
         mazoRevuelto
     }
     
-    fn colocar()->[Vec<Carta>;7]{
-        let mut pilas:[Vec<Carta>;7] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
+    fn colocar()->[Vec<Carta>;8]{
+        //En la posicion 8 estará alojado el restante del mazo
+        let mut pilas:[Vec<Carta>;8] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
         let mut mazoRevuelto:Vec<Carta> = mezclarMazo();
         for i in 0..7{
            for j in 0..(i+1){
@@ -98,7 +99,8 @@ fn game() -> Html {
            
            }
         }
-        log!(serde_json::to_string_pretty(&pilas).unwrap());
+        pilas[7] = mazoRevuelto;
+        //log!(serde_json::to_string_pretty(&pilas).unwrap());
         pilas
 
     }
