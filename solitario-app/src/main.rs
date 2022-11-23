@@ -124,6 +124,10 @@ fn game() -> Html {
                 imagen.set_attribute("src",&carta.img);
                 imagen.set_attribute("width", "98");
                 imagen.set_attribute("height", "152");
+                cartaHTML.set_class_name("pila-inicial");
+                let espacio = j*30;
+                let style = format!("top:{}px",espacio.to_string());
+                cartaHTML.set_attribute("style", &style);
                 cartaHTML.append_child(&imagen);
                 let node = cartaHTML.into();
                 pila.append_child(&node);
