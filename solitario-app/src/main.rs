@@ -1,8 +1,10 @@
 
-use gloo::console::{log, externs::log}; //Para usar console log
+use std::{process::id, ops::Index};
+
+use gloo::{console::{log, externs::log}, utils::{document, document_element, window}}; //Para usar console log
 use rand::{Rng};
 use serde::{Deserialize, Serialize}; //Para mostrar imprimir JSON
-use yew::prelude::*; //Framework //Math random
+use yew::{prelude::*, callback}; //Framework //Math random
 
 #[derive(Serialize, Deserialize)]
 
@@ -13,6 +15,8 @@ struct Carta {
     tipo: String,
     color: String,
     img: String,
+    volteada:bool,
+    id:isize
 }
 
 // impl Copy for Carta{}
@@ -50,6 +54,9 @@ fn game() -> Html {
                     color: colores.to_string(),
                     tipo: j.to_string(),
                     img: imgs.to_string(),
+                    volteada:true,
+                    id:0
+
                 };
                 mazo.push(carta);
             }
@@ -105,12 +112,35 @@ fn game() -> Html {
 
     }
 
+    fn colocarCartasPilas(pilas:UseStateHandle<[Vec<Carta>;8]>){
+        let document = document();
+        for i in 0..7  {
+            let id = format!("#pila-{}",i.to_string());
+            let pila = document.query_selector(&id).unwrap().unwrap();
+            for j in 0..pilas[i].len(){
+                let carta = pilas[i].get(j).unwrap().clone();
+                let cartaHTML = document.create_element("div").unwrap();
+                let imagen = document.create_element("img").unwrap();
+                imagen.set_attribute("src",&carta.img);
+                imagen.set_attribute("width", "98");
+                imagen.set_attribute("height", "152");
+                cartaHTML.append_child(&imagen);
+                let node = cartaHTML.into();
+                pila.append_child(&node);
+                
+            }
+        }
+    }
+
     let llenarMazo = Callback::from(move |_| {
         pila.set(colocar());
         // m.get(0).unwrap().color;
         log!(serde_json::to_string_pretty(&*pila).unwrap());
 
+        colocarCartasPilas(pila.clone());
     });
+
+
 
 
     html!(
