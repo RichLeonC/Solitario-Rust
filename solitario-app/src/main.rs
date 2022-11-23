@@ -19,12 +19,6 @@ struct Carta {
     id:isize
 }
 
-// impl Copy for Carta{}
-// impl Clone for Carta {
-//     fn clone(&self)->Carta{
-//         *self
-//     }
-// }
 
 #[function_component(Game)]
 
@@ -121,7 +115,13 @@ fn game() -> Html {
                 let carta = pilas[i].get(j).unwrap().clone();
                 let cartaHTML = document.create_element("div").unwrap();
                 let imagen = document.create_element("img").unwrap();
-                imagen.set_attribute("src",&carta.img);
+                if(carta.volteada && j!=pilas[i].len()-1) {
+                    imagen.set_attribute("src","./img/card back red.png");
+                }
+                else {
+                    imagen.set_attribute("src",&carta.img);
+                }
+                
                 imagen.set_attribute("width", "98");
                 imagen.set_attribute("height", "152");
                 cartaHTML.set_class_name("pila-inicial");
