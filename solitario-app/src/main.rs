@@ -1,10 +1,10 @@
 
-use std::{process::id, ops::Index};
 
-use gloo::{console::{log, externs::log}, utils::{document, document_element, window}}; //Para usar console log
+use gloo::{console::{log, externs::log}, utils::{document, document_element, window}, timers::callback}; //Para usar console log
 use rand::{Rng};
 use serde::{Deserialize, Serialize}; //Para mostrar imprimir JSON
-use yew::{prelude::*, callback}; //Framework //Math random
+use yew::{prelude::*}; //Framework //Math random
+
 
 #[derive(Serialize, Deserialize)]
 
@@ -23,9 +23,9 @@ struct Carta {
 #[function_component(Game)]
 
 fn game() -> Html {
-    // let onclick2 = Callback::from(|mouse_event:MouseEvent|{
-    //     log!("Probando");
-    // });
+    let onclick2 = Callback::from(|mouse_event:MouseEvent|{
+        log!("Probando");
+    });
     //let mazoRestante = use_state(|| Vec::new());
     let pila= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
     //let v: Vec<Vec<Carta>> = use_state(|| Vec::new());
@@ -106,16 +106,35 @@ fn game() -> Html {
 
     }
 
+    fn comprobarClickCarta(carta:Carta){
+        log!("Si funcionoo");
+        // if(primeraCartaClik){
+
+        // }
+        // else{
+
+        // }
+    }
+
+
+  
     fn colocarCartasPilas(pilas:UseStateHandle<[Vec<Carta>;8]>){
         let document = document();
-        for i in 0..7  {
-            let id = format!("#pila-{}",i.to_string());
+        for i in 0..8  {
+            let mut j = i;
+            if i==7 {
+                j=j-1;
+            }
+            let idMazo = "#pila-inicial".to_string();
+            let mazo = document.query_selector(&idMazo).unwrap().unwrap();
+            let id = format!("#pila-{}",j.to_string());
+
             let pila = document.query_selector(&id).unwrap().unwrap();
             for j in 0..pilas[i].len(){
                 let carta = pilas[i].get(j).unwrap().clone();
                 let cartaHTML = document.create_element("div").unwrap();
                 let imagen = document.create_element("img").unwrap();
-                if(carta.volteada && j!=pilas[i].len()-1) {
+                if carta.volteada && j!=pilas[i].len()-1 && i != 7 {
                     imagen.set_attribute("src","./img/card back red.png");
                 }
                 else {
@@ -127,10 +146,20 @@ fn game() -> Html {
                 cartaHTML.set_class_name("pila-inicial");
                 let espacio = j*30;
                 let style = format!("top:{}px",espacio.to_string());
-                cartaHTML.set_attribute("style", &style);
-                cartaHTML.append_child(&imagen);
-                let node = cartaHTML.into();
-                pila.append_child(&node);
+                if(i!=7){
+                    cartaHTML.set_attribute("style", &style);
+                    cartaHTML.append_child(&imagen);
+                   // cartaHTML.set_attribute("onclick", "comprobarClickCarta(carta)");
+                    let node = cartaHTML.into();
+                    pila.append_child(&node);
+                }
+                else{
+                   cartaHTML.append_child(&imagen);
+                   let node = cartaHTML.into();
+                   mazo.append_child(&node);
+               }
+
+
                 
             }
         }
