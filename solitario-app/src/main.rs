@@ -4,7 +4,8 @@ use gloo::{console::{log, externs::log}, utils::{document, document_element, win
 use rand::{Rng};
 use serde::{Deserialize, Serialize}; //Para mostrar imprimir JSON
 use yew::{prelude::*}; //Framework //Math random
-
+use wasm_bindgen::{prelude::*, JsCast};
+use web_sys::{console,Document,HtmlElement,Element,Event,EventTarget};
 
 #[derive(Serialize, Deserialize)]
 
@@ -20,15 +21,17 @@ struct Carta {
 }
 
 
+
 #[function_component(Game)]
 
 fn game() -> Html {
-    let onclick2 = Callback::from(|mouse_event:MouseEvent|{
-        log!("Probando");
-    });
-    //let mazoRestante = use_state(|| Vec::new());
-    let pila= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
-    //let v: Vec<Vec<Carta>> = use_state(|| Vec::new());
+    // let onclick2 = Callback::from(|mouse_event:MouseEvent|{
+    //     log!("Probando");
+    // });
+   
+    let pila:UseStateHandle<[Vec<Carta>; 8]>= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
+
+    let mut pila2:[Vec<Carta>;8] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
 
     fn creaMazo() -> Vec<Carta> {
         let mut mazo: Vec<Carta> = Vec::new();
@@ -116,10 +119,15 @@ fn game() -> Html {
         // }
     }
 
+     fn fuct(pilas:UseStateHandle<[Vec<Carta>;8]>){
+
+    }
+
 
   
     fn colocarCartasPilas(pilas:UseStateHandle<[Vec<Carta>;8]>){
         let document = document();
+
         for i in 0..8  {
             let mut j = i;
             if i==7 {
@@ -149,7 +157,11 @@ fn game() -> Html {
                 if(i!=7){
                     cartaHTML.set_attribute("style", &style);
                     cartaHTML.append_child(&imagen);
-                   // cartaHTML.set_attribute("onclick", "comprobarClickCarta(carta)");
+                    let f = Closure::wrap(Box::new(move || { 
+                        log!("holaaa");
+                    }) as Box<dyn FnMut()>);
+                    cartaHTML.add_event_listener_with_callback("click", f.as_ref().unchecked_ref());
+                    f.forget();
                     let node = cartaHTML.into();
                     pila.append_child(&node);
                 }
@@ -167,10 +179,16 @@ fn game() -> Html {
 
     let llenarMazo = Callback::from(move |_| {
         pila.set(colocar());
-        // m.get(0).unwrap().color;
+        
+        //pila2 = colocar().clone();
+
         log!(serde_json::to_string_pretty(&*pila).unwrap());
 
         colocarCartasPilas(pila.clone());
+    });
+
+    let pila6 = Callback::from(move |_|{
+
     });
 
 
@@ -206,7 +224,7 @@ fn game() -> Html {
             <div class="espacio-carta" id="pila-3"></div>
             <div class="espacio-carta" id="pila-4"></div>
             <div class="espacio-carta" id="pila-5"></div>
-            <div class="espacio-carta" id="pila-6"></div>
+            <div onclick={pila6} class="espacio-carta" id="pila-6"></div>
         </div>
     </div>
     )
