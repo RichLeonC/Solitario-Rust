@@ -31,7 +31,7 @@ fn game() -> Html {
    
     let pila:UseStateHandle<[Vec<Carta>; 8]>= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
 
-    let mut pila2:[Vec<Carta>;8] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
+    let mut primeraCartaClick:UseStateHandle<Carta> =use_state(|| Carta { valor: "".to_string(), tipo: "".to_string(), color: "".to_string(), img: "".to_string(), volteada: false, id: 2 });
 
     fn creaMazo() -> Vec<Carta> {
         let mut mazo: Vec<Carta> = Vec::new();
@@ -119,13 +119,12 @@ fn game() -> Html {
         // }
     }
 
-     fn fuct(pilas:UseStateHandle<[Vec<Carta>;8]>){
 
-    }
 
 
   
-    fn colocarCartasPilas(pilas:UseStateHandle<[Vec<Carta>;8]>){
+    let colocarCartasPilas = |pilas:UseStateHandle<[Vec<Carta>;8]>|{
+
         let document = document();
 
         for i in 0..8  {
@@ -154,11 +153,11 @@ fn game() -> Html {
                 cartaHTML.set_class_name("pila-inicial");
                 let espacio = j*30;
                 let style = format!("top:{}px",espacio.to_string());
-                if(i!=7){
+                if i!=7{
                     cartaHTML.set_attribute("style", &style);
                     cartaHTML.append_child(&imagen);
                     let f = Closure::wrap(Box::new(move || { 
-                        log!("holaaa");
+                        primeraCartaClick.set(carta.clone());
                     }) as Box<dyn FnMut()>);
                     cartaHTML.add_event_listener_with_callback("click", f.as_ref().unchecked_ref());
                     f.forget();
@@ -175,21 +174,18 @@ fn game() -> Html {
                 
             }
         }
-    }
+    };
+
 
     let llenarMazo = Callback::from(move |_| {
         pila.set(colocar());
-        
-        //pila2 = colocar().clone();
 
         log!(serde_json::to_string_pretty(&*pila).unwrap());
 
         colocarCartasPilas(pila.clone());
-    });
-
-    let pila6 = Callback::from(move |_|{
 
     });
+
 
 
 
@@ -224,7 +220,7 @@ fn game() -> Html {
             <div class="espacio-carta" id="pila-3"></div>
             <div class="espacio-carta" id="pila-4"></div>
             <div class="espacio-carta" id="pila-5"></div>
-            <div onclick={pila6} class="espacio-carta" id="pila-6"></div>
+            <div class="espacio-carta" id="pila-6"></div>
         </div>
     </div>
     )
