@@ -65,26 +65,12 @@ fn game() -> Html {
     fn mezclarMazo() -> Vec<Carta> {
         let mut rng = rand::thread_rng();
         let mut mazoRevuelto: Vec<Carta> = Vec::new();
-        let mut g2: Vec<Carta> = Vec::new();
-        let mut g3: Vec<Carta> = Vec::new();
-        let mazo: Vec<Carta> = creaMazo();
+        let mut mazo: Vec<Carta> = creaMazo();
+        while mazo.len()>0{
+            let random = rng.gen_range(0..mazo.len());
+            mazoRevuelto.push(mazo.get(random).unwrap().clone());
+            mazo.remove(random);
 
-        for i in mazo {
-            let random = rng.gen_range(1..4);
-            if random == 1 {
-                mazoRevuelto.push(i);
-            } else if random == 2 {
-                g2.push(i);
-            } else {
-                g3.push(i);
-            }
-        }
-        for i in g2 {
-            mazoRevuelto.push(i);
-            mazoRevuelto.reverse();
-        }
-        for i in g3 {
-            mazoRevuelto.push(i);
         }
 
         //log!(serde_json::to_string_pretty(&mazoRevuelto).unwrap());
@@ -157,7 +143,7 @@ fn game() -> Html {
                     cartaHTML.set_attribute("style", &style);
                     cartaHTML.append_child(&imagen);
                     let f = Closure::wrap(Box::new(move || { 
-                        primeraCartaClick.set(carta.clone());
+                        //primeraCartaClick.set(carta.clone());
                     }) as Box<dyn FnMut()>);
                     cartaHTML.add_event_listener_with_callback("click", f.as_ref().unchecked_ref());
                     f.forget();
