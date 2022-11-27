@@ -162,6 +162,7 @@ fn game() -> Html {
         }
     };
 
+    
 
     let llenarMazo = Callback::from(move |_| {
         pila.set(colocar());
