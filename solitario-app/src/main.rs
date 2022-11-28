@@ -1,4 +1,4 @@
-
+//Richard Osvaldo León Chinchilla 2019003759
 
 use gloo::{console::{log, externs::log}, utils::{document, document_element, window}, timers::callback}; //Para usar console log
 use rand::{Rng};
@@ -21,18 +21,15 @@ struct Carta {
 }
 
 
-
+//Juego
 #[function_component(Game)]
 
 fn game() -> Html {
-    // let onclick2 = Callback::from(|mouse_event:MouseEvent|{
-    //     log!("Probando");
-    // });
-   
     let pila:UseStateHandle<[Vec<Carta>; 8]>= use_state(|| [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()]);
 
-    let mut primeraCartaClick:UseStateHandle<Carta> =use_state(|| Carta { valor: "".to_string(), tipo: "".to_string(), color: "".to_string(), img: "".to_string(), volteada: false, id: 2 });
+    let primeraCartaClick:UseStateHandle<Carta> =use_state(|| Carta { valor: "".to_string(), tipo: "".to_string(), color: "".to_string(), img: "".to_string(), volteada: false, id: 2 });
 
+//Funcion que se encarga de crear las cartas del solitario
     fn creaMazo() -> Vec<Carta> {
         let mut mazo: Vec<Carta> = Vec::new();
         let tipos = ["trebol", "corazon", "diamante", "espada"];
@@ -62,6 +59,7 @@ fn game() -> Html {
         mazo
     }
 
+//Funcion que se encarga de revolver las cartas creadas
     fn mezclarMazo() -> Vec<Carta> {
         let mut rng = rand::thread_rng();
         let mut mazoRevuelto: Vec<Carta> = Vec::new();
@@ -77,6 +75,7 @@ fn game() -> Html {
         mazoRevuelto
     }
     
+//Funcion que se encarga de colocar las cartas en las pilas [1..7]
     fn colocar()->[Vec<Carta>;8]{
         //En la posicion 8 estará alojado el restante del mazo
         let mut pilas:[Vec<Carta>;8] = [Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new(),Vec::new()];
@@ -108,9 +107,8 @@ fn game() -> Html {
 
 
 
-  
+  //Funcion que coloca las cartas de la pila, en las pilas del tablero (HTML) 
     let colocarCartasPilas = |pilas:UseStateHandle<[Vec<Carta>;8]>|{
-
         let document = document();
 
         for i in 0..8  {
@@ -143,7 +141,8 @@ fn game() -> Html {
                     cartaHTML.set_attribute("style", &style);
                     cartaHTML.append_child(&imagen);
                     let f = Closure::wrap(Box::new(move || { 
-                        //primeraCartaClick.set(carta.clone());
+                      //  primeraCartaClick.set(carta.clone());
+                        
                     }) as Box<dyn FnMut()>);
                     cartaHTML.add_event_listener_with_callback("click", f.as_ref().unchecked_ref());
                     f.forget();
@@ -160,29 +159,26 @@ fn game() -> Html {
                 
             }
         }
+
     };
 
     
-
+//Funcion que se ejecuta cuando se le da click, da inicio al juego
     let llenarMazo = Callback::from(move |_| {
         pila.set(colocar());
 
         log!(serde_json::to_string_pretty(&*pila).unwrap());
 
-        colocarCartasPilas(pila.clone());
+         colocarCartasPilas(pila.clone());
 
     });
 
-
-
-
-
+    //HTML del tablero
     html!(
         <div class="tablero">
         <button onclick={llenarMazo} class="empezar">{"Juego nuevo"}</button>
         <br/>
         <br/>
-        <button class="empezar">{"Salir"}</button>
         <div class="superior">
             <div class="mazo">
                 <div class="espacio-carta">
@@ -213,6 +209,7 @@ fn game() -> Html {
     )
 }
 
+//Funcion principal
 fn main() {
     yew::start_app::<Game>();
 }
